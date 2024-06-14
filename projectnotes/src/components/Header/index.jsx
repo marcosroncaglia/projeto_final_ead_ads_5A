@@ -1,29 +1,39 @@
-import {RiShutDownLine} from 'react-icons/ri';
-import {Container, Profile, Logout} from './styles';
+import { RiShutDownLine } from "react-icons/ri";
+import { Container, Profile, Logout } from "./styles";
+import { useAuth } from "../../hooks/auth"
 
-export function Header() {
-  return (
-    <Container>
-      <Profile to="/profile">
-        <img 
-          src="https://github.com/marcosroncaglia.png"
-          alt="Foto do usuário / User photo" />
+import {api} from "../../services/api";
+import avatarPlaceHolder from "../../assets/avatar_placeholder.svg"
+import { useNavigate } from "react-router-dom";
 
-        <div>
-          <span>
-            Bem-vindo,
-          </span>
 
-          <strong>
-            Marcos Roncaglia
-          </strong>
-        </div>
-      </Profile>
+export function Header(){
 
-      <Logout>
-        <RiShutDownLine />
-      </Logout>
+    const {signOut , user} = useAuth();
 
-    </Container>
-  );
+    const navigation = useNavigate();
+
+    function handleSignOut(){
+        navigation("/");
+        signOut();
+    }
+
+    const avatarUrl = user.avatar ? `${api.defaults.baseURL}/files/${user.avatar}` : avatarPlaceHolder;
+
+    return(
+        <Container>
+            <Profile to="/profile">
+                <img src={avatarUrl} alt="Foto do usuário" />
+
+                <div>
+                    <span>Bem-vindo,</span>
+                    <strong>{user.name}</strong>
+                </div>
+            </Profile>
+
+            <Logout onClick={handleSignOut}>
+                <RiShutDownLine />
+            </Logout>
+        </Container>
+    );
 }
